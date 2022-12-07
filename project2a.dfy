@@ -5,7 +5,8 @@
 
   Mini Project 2 - Part A
 
-  Your name(s):
+  Your name(s): Alan Cabral Trindade Prado 2020006345
+                Artur Gaspar da Silva      2020006388 
   ===============================================
 */
 
@@ -16,7 +17,12 @@ function method rem<T(==)>(x: T, s: seq<T>): seq<T>
     ensures forall i :: 0 <= i < |rem(x, s)| ==> rem(x, s)[i] in s;
     ensures forall i :: 0 <= i < |s| && s[i] != x ==> s[i] in rem(x, s);
   {
-
+    if s == [] then 
+      []
+    else if s[0] == x then
+      rem(x,s[1..])
+    else
+      [s[0]]+rem(x,s[1..])
   }
 
 // The next three classes have a minimal class definition,
@@ -54,21 +60,25 @@ class Message
     ensures sender == s;
     ensures recipients == [];
   {
-
+    id := new MessageId();
+    date := new Date();
+    sender := s;
+    content := "";
+    recipients := [];
   }
 
   method setContent(c: string)
     modifies this;
     ensures content == c;
   {
-
+    content := c;
   }
 
   method setDate(d: Date)
     modifies this;
     ensures date == d;
   {
-
+    date := d;
   }
 
   method addRecipient(p: nat, r: Address)
@@ -79,7 +89,7 @@ class Message
     ensures forall i :: 0 <= i < p ==> recipients[i] == old(recipients[i]);
     ensures forall i :: p < i < |recipients| ==> recipients[i] == old(recipients[i-1]);
   {
-
+    recipients := recipients[..p] + [r] + recipients[p..];
   }
 }
 
@@ -93,6 +103,8 @@ class Mailbox {
 
   // Creates an empty mailbox with name n
   constructor (n: string)
+    ensures name == n;
+    ensures messages == {};
   {
     name := n;
     messages := {};
@@ -100,6 +112,8 @@ class Mailbox {
 
   // Adds message m to the mailbox
   method add(m: Message)
+    modifies this
+    ensures messages == messages + {m}
   {
     messages := { m } + messages;
   }
@@ -107,17 +121,21 @@ class Mailbox {
   // Removes message m from mailbox
   // m need not be in the mailbox
   method remove(m: Message)
+    modifies this
+    ensures messages == messages - {m}
   {
     messages := messages - { m };
   }
 
   // Empties the mailbox messages
   method empty()
+    modifies this
+    ensures messages == {}
   {
     messages := {};
   }
 }
-
+/*
 //==========================================================
 //  MailApp
 //==========================================================
@@ -207,3 +225,4 @@ class MailApp {
     trash.empty();
   }
 }
+*/
