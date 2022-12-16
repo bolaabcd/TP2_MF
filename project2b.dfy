@@ -5,7 +5,8 @@
 
   Mini Project 2 - Part B
 
-  Your name(s):
+  Your name(s): Alan Cabral Trindade Prado 2020006345
+                Artur Gaspar da Silva      2020006388 
   ===============================================
 */
 
@@ -32,9 +33,11 @@ class Buffer<T(0)>
 
   // class invariant
   predicate Valid()
+    reads this, a;
   {
     // concrete state invariants (to be provided)
-
+    front < a.Length &&
+    size <= a.Length &&
 
     // connection between abstract and concrete state
     Capacity == a.Length &&
@@ -50,40 +53,61 @@ class Buffer<T(0)>
     ensures Capacity == n;
     ensures Valid();
   {
+    a := new T[n];
+    size := 0;
+    front := 0;
 
+    Contents := [];
+    Capacity := n;
   }
 
   function method isEmpty():bool
+    reads this, a;
     requires Valid();
     ensures isEmpty() <==> Contents == [];
   {
-
+    size == 0
   }
 
   function method isFull():bool
+    reads this, a;
     requires Valid();
     ensures isFull() <==> |Contents| == Capacity;
   {
-
+    size == a.Length
   }
 
   method get() returns (d: T)
+    modifies this;
     requires Valid();
     requires !isEmpty();
     ensures Valid();
     ensures old(Contents) == [d] + Contents;
     ensures Capacity == old(Capacity);
   {
-
+    d := a[front];
+    size := size - 1;
+    front := front + 1;
+    if (front == a.Length) { front := 0; }
+  
+    Contents := Contents[1..];
   }
 
   method put(d: T)
+    modifies this, a;
     requires Valid();
     requires !isFull();
     ensures Valid();
     ensures Contents == old(Contents) + [d];
     ensures Capacity == old(Capacity);
   {
+    if (front + size < a.Length) {
+      a[front + size] := d;
+    } else {
+      a[front + size - a.Length] := d;
+    }
+    size := size + 1;
 
+    Contents := Contents + [d];
   }
 }
