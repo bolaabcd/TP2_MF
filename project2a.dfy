@@ -177,6 +177,11 @@ class MailApp {
     ensures fresh(trash)
     ensures fresh(sent)
     ensures fresh(userboxList)
+    ensures inbox.name == "Inbox";
+    ensures drafts.name == "Drafts";
+    ensures trash.name == "Trash";
+    ensures sent.name == "Sent";
+    ensures userboxes == {}
     ensures Valid()
   {
     inbox := new Mailbox("Inbox");
